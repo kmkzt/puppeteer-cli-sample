@@ -1,0 +1,14 @@
+{
+  "name": "puppeteer-sample-cli",
+  "version": "1.0.0",
+  "private": true,
+  "description": "puppeteer sample script",
+  "scripts": {
+    "capture": "node script/capture.js"
+  },
+  "keywords": [],
+  "author": "kmkzt",
+  "dependencies": {
+    "puppeteer": "^1.15.0"
+  }
+}
