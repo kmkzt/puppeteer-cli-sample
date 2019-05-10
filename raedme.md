@@ -9,3 +9,7 @@ node src/capture.js --url=https://google.co.jp --path=capture/google.png
 # switch device (pc / sp)
 node src/capture.js --device=pc
 ```
+
+## Refference 
+
+https://pptr.dev/

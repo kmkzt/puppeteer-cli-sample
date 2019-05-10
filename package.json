@@ -4,7 +4,9 @@
   "private": true,
   "description": "puppeteer sample script",
   "scripts": {
-    "capture": "node script/capture.js"
+    "capture": "node script/capture.js",
+    "trace": "node script/tracer.js",
+    "coverage": "node script/coverage.js"
   },
   "keywords": [],
   "author": "kmkzt",
