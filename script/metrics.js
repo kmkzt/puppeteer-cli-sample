@@ -25,9 +25,16 @@ const vp = device === 'pc' ? VIEWPORT_PC_DEFAULT : VIEWPORT_SP_DEFAULT
     const page = await browser.newPage()
     await page.setViewport(vp)
     await page.setUserAgent(ua)
+    const start = await page.metrics()
+    // console.log(startMetrics)
     await page.goto(url)
-    const metrics = await page.metrics()
-    console.log(metrics)
+    const end = await page.metrics()
+    // console.log(metrics)
+    console.log(`
+    url: ${url}
+    device: ${device}
+    open browser time:${end.Timestamp - start.Timestamp}s
+    `)
     process.exit()
     // return metrics.reduce((acc, i) => ({ ...acc, [i.name]: i.value }), {})
   } catch (err) {
