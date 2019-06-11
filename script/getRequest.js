@@ -19,6 +19,8 @@ const device = getArgOption(options, '--device', 'pc')
 
 const ua = device === 'pc' ? UA_CHROME : UA_CHROME_MOBILE
 const vp = device === 'pc' ? VIEWPORT_PC_DEFAULT : VIEWPORT_SP_DEFAULT
+
+const convertMs = (s) => Math.floor((s) * 1000000) / 1000
 ;(async () => {
   try {
     const browser = await puppeteer.launch()
@@ -44,15 +46,17 @@ const vp = device === 'pc' ? VIEWPORT_PC_DEFAULT : VIEWPORT_SP_DEFAULT
         const info = requestList[url] = {
           ...requestList[url],
           end: end.Timestamp,
-          time: end.Timestamp - requestList[url].start
+          time: convertMs(end.Timestamp - requestList[url].start),
+          endpoint: url.match( /[^/]+$/i )[0]
         }
-        console.log(`${Math.floor((info.end - info.start) * 1000000) / 1000}ms: ${info.resource} -> ${url}`)
+        console.log(`${info.endpoint}: ${info.resource} -> ${info.time}ms`)
       }
     })
     await page.goto(url)
     // page.removeListener('request', logger);
     await browser.close()
-    console.table(requestList)
+    const sortHeavyList = Object.values(requestList).sort((a,b) => a.time > b.time ? -1 : 1)
+    console.table(sortHeavyList)
     process.exit()
   } catch (err) {
     console.log(err)
