@@ -14,13 +14,14 @@ const { argv2option, getArgOption } = require('./utils/arg.js')
  */
 const options = argv2option()
 const url = getArgOption(options, '--url', 'https://www.google.co.jp')
-const traceJson = getArgOption(options, '--path', 'trace.json')
 const device = getArgOption(options, '--device', 'pc')
+const reso = getArgOption(options, '--resource', 'xhr,fetch') // Request.ResourceType >> xhf, fetch, script, image etc
 
 const ua = device === 'pc' ? UA_CHROME : UA_CHROME_MOBILE
 const vp = device === 'pc' ? VIEWPORT_PC_DEFAULT : VIEWPORT_SP_DEFAULT
 
 const convertMs = (s) => Math.floor((s) * 1000000) / 1000
+const getFilenameFromUrl = (url) => url.match( /[^/]+$/i )[0]
 ;(async () => {
   try {
     const browser = await puppeteer.launch()
@@ -30,7 +31,8 @@ const convertMs = (s) => Math.floor((s) * 1000000) / 1000
     let requestList = {}
     page.on('request', async (req) => {
       const resource = req.resourceType()
-      if (req.method() === 'GET' && (resource === 'xhr' || resource === 'fetch')) {
+      const checkResource = reso.split(',').some((r) => r === resource)
+      if (req.method() === 'GET' && checkResource) {
         const url = req.url()
         const start = await page.metrics()
         requestList[url] = {
@@ -47,9 +49,9 @@ const convertMs = (s) => Math.floor((s) * 1000000) / 1000
           ...requestList[url],
           end: end.Timestamp,
           time: convertMs(end.Timestamp - requestList[url].start),
-          endpoint: url.match( /[^/]+$/i )[0]
+          url
         }
-        console.log(`${info.endpoint}: ${info.resource} -> ${info.time}ms`)
+        console.log(`${getFilenameFromUrl(info.url)}: ${info.resource} -> ${info.time}ms`)
       }
     })
     await page.goto(url)
