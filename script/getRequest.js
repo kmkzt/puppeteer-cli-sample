@@ -46,7 +46,6 @@ const vp = device === 'pc' ? VIEWPORT_PC_DEFAULT : VIEWPORT_SP_DEFAULT
           end: end.Timestamp,
           time: end.Timestamp - requestList[url].start
         }
-
         console.log(`${Math.floor((info.end - info.start) * 1000000) / 1000}ms: ${info.resource} -> ${url}`)
       }
     })
