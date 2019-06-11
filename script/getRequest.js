@@ -30,23 +30,30 @@ const vp = device === 'pc' ? VIEWPORT_PC_DEFAULT : VIEWPORT_SP_DEFAULT
       const resource = req.resourceType()
       if (req.method() === 'GET' && (resource === 'xhr' || resource === 'fetch')) {
         const url = req.url()
+        const start = await page.metrics()
         requestList[url] = {
           resource,
-          start: await page.metrics()
+          start: start.Timestamp
         }
       }
     });
     page.on('requestfinished', async (req) => {
-      let end = await page.metrics()
+      const end = await page.metrics()
       const url = req.url()
-      const info = requestList[url]
       if (requestList.hasOwnProperty(url)) {
-        console.log(`${info.resource}: ${url} -> ${Math.floor((end.Timestamp - info.start.Timestamp) * 1000000) / 1000}ms`)
+        const info = requestList[url] = {
+          ...requestList[url],
+          end: end.Timestamp,
+          time: end.Timestamp - requestList[url].start
+        }
+
+        console.log(`${Math.floor((info.end - info.start) * 1000000) / 1000}ms: ${info.resource} -> ${url}`)
       }
     })
     await page.goto(url)
     // page.removeListener('request', logger);
     await browser.close()
+    console.table(requestList)
     process.exit()
   } catch (err) {
     console.log(err)
