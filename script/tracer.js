@@ -14,7 +14,7 @@ const { argv2option, getArgOption } = require('./utils/arg.js')
  */
 const options = argv2option()
 const url = getArgOption(options, '--url', 'https://www.google.co.jp')
-const traceJson = getArgOption(options, '--path', 'trace/google.json')
+const traceJson = getArgOption(options, '--path', 'trace.json')
 const device = getArgOption(options, '--device', 'pc')
 
 const ua = device === 'pc' ? UA_CHROME : UA_CHROME_MOBILE
