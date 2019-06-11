@@ -16,6 +16,7 @@ const options = argv2option()
 const url = getArgOption(options, '--url', 'https://www.google.co.jp')
 const device = getArgOption(options, '--device', 'pc')
 const reso = getArgOption(options, '--resource', 'xhr,fetch') // Request.ResourceType >> xhf, fetch, script, image etc
+const orderKey = getArgOption(options, '--order', 'time')
 
 const ua = device === 'pc' ? UA_CHROME : UA_CHROME_MOBILE
 const vp = device === 'pc' ? VIEWPORT_PC_DEFAULT : VIEWPORT_SP_DEFAULT
@@ -57,7 +58,7 @@ const getFilenameFromUrl = (url) => url.match( /[^/]+$/i )[0]
     await page.goto(url)
     // page.removeListener('request', logger);
     await browser.close()
-    const sortHeavyList = Object.values(requestList).sort((a,b) => a.time > b.time ? -1 : 1)
+    const sortHeavyList = Object.values(requestList).sort((a,b) => a[orderKey] > b[orderKey] ? 1 : -1)
     console.table(sortHeavyList)
     process.exit()
   } catch (err) {
